@@ -1,0 +1,94 @@
+// Motor Kiri
+const int IN1 = 8;
+const int IN2 = 7;
+const int ENA = 9; // PWM
+
+// Motor Kanan
+const int IN3 = 6;
+const int IN4 = 5;
+const int ENB = 3; // PWM
+
+const int echoPin = 11;
+const int trigPin = 12;
+
+const int echoPin1 = 10;
+const int trigPin1 = 13;
+
+// Kecepatan motor (0–255)
+const int motorSpeed = 150;
+
+void setup() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENA, OUTPUT);
+
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENB, OUTPUT);
+
+  pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT);
+  
+  pinMode(echoPin1, INPUT);
+  pinMode(trigPin1, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  int durasiPantulan = pulseIn(echoPin, HIGH);
+  float jarak = durasiPantulan * 0.034 / 2;
+  float jarakM = jarak / 100;
+  Serial.print("Jarak : ");
+  Serial.print(jarak);
+  Serial.print("cm ");
+  Serial.print(jarakM);
+  Serial.println("m");
+
+  // SENSOR 2
+  digitalWrite(trigPin1, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin1, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin1, LOW);
+  int durasiPantulan1 = pulseIn(echoPin1, HIGH);
+  float jarak1 = durasiPantulan1 * 0.034 / 2;
+  float jarakM1 = jarak1 / 100;
+  Serial.print("Jarak1 : ");
+  Serial.print(jarak1);
+  Serial.print("cm ");
+  Serial.print(jarakM1);
+  Serial.println("m");
+
+  if (jarak >= 15 && jarak1 >= 15) {
+    // Maju
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, motorSpeed);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, motorSpeed);
+  } else {
+    // Berhenti dulu 4 detik
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, 0);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, 0);
+    delay(1000);
+    // Belok ke kanan
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    analogWrite(ENA, motorSpeed);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, motorSpeed);
+    delay(100);
+  }
+  delay(100);
+}
